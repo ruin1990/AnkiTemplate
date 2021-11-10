@@ -1,0 +1,102 @@
+<div id="ruin_temp_dst" >
+{{cloze:Text}}
+</div>
+<div id="ruin_temp_src" style="display:none">
+{{Text}}
+</div>
+<script type="text/javascript">
+// https://github.com/ruin1990/AnkiTemplate/ClozeAdv/front.html
+function cloze_get_answer(text,prefix_len,postfix_len){
+	return text.substr(prefix_len, text.length-prefix_len-postfix_len);
+}
+
+function remove_mathjax_spans(x){
+	return x.replace(/\\\[.+\\]/g, "");
+}
+
+function get_cur_cloze_id(){
+	let bak_id = null;
+	
+	let dst=$('#ruin_temp_dst').html()
+	let src=$('#ruin_temp_src').html()
+	dst = remove_mathjax_spans(dst);
+	src = remove_mathjax_spans(src);
+	let len = Math.max(dst.length, src.length)
+ 
+	const cloze_tmp = "<span class=\"cloze\">[...]</span>"
+	const cloze_skip = cloze_tmp.length - 1
+	for(var i=0, j=0;i<len;i++,j++){
+		if(src[i] == dst[j])
+			continue;
+		if(src[i] == '{' && src[i+1] == '{' && src[i+2] == 'c' && !isNaN(src[i+3])){
+			let src_tmp = src.substr(i)
+			let m = src_tmp.match(/\{\{c([0-9]+)::([^\{|\}]*?)\}\}/mg)
+			if( m != null && m.length > 0)
+			{
+				let src_tmp2 = m[0].split(/[\{\{c|::|\}\}]/mg)
+				let result = src_tmp2.filter(function (s) {
+				  return !!s
+				});
+				let id = result[0]
+				let prefix_len = id.length + 5
+				let postfix_len = 2
+				let text = cloze_get_answer(m[0],prefix_len,postfix_len)
+				if(text.length<=0 && dst.substr(j, cloze_tmp.length) == cloze_tmp)
+				{
+					return id
+				}
+				if(dst.substr(j, text.length) == text)
+				{
+					i+=(m[0].length-1)
+					j+=(text.length-1)
+					continue
+				}
+				return id
+			}
+		}
+		return bak_id
+	}
+}
+
+
+function add_answer_into_cloze(){
+	let id = get_cur_cloze_id();
+	if(id == null)
+	{
+		console.log("find cloze id failed")
+		return;
+	}
+	src=$('#ruin_temp_src').html()
+	src = remove_mathjax_spans(src);
+	let re=new RegExp("\{\{c" + id +"::[^\{|\}]*\}\}","mg");
+	
+	prefix_len = id.length + 5
+	postfix_len = 2
+	
+	m = src.match(re)
+	
+	let arr = new Array;
+	for(let i=0;i<m.length;i++){
+		arr.push(cloze_get_answer(m[i],prefix_len,postfix_len))
+	}
+	
+	let idx = 0
+	$('.cloze').each(function(){
+		$(this).attr("ans", arr[idx])
+		idx++
+	});
+	
+	$('.cloze').on("click",function(){
+		ans = $(this).attr("ans")
+		if($(this).html()==ans)
+			$(this).html("[...]");
+		else
+			$(this).html(ans);
+	});
+
+	//free some component, if not needed
+	$('#ruin_temp_src').remove();
+	$('#ruin_cloze_preprocess').remove();
+}
+add_answer_into_cloze();
+</script>

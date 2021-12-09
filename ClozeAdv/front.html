@@ -11,7 +11,7 @@ function cloze_get_answer(text,prefix_len,postfix_len){
 }
 
 function remove_mathjax_spans(x){
-	return x.replace(/\\\[.+\\]/g, "").replace(/\\\(.+\\)/g, "");
+	return x.replace(/\\\[.+\\]/g, "").replace(/\\(.+\\)/g, "");
 }
 
 function get_cur_cloze_id(){

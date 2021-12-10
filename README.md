@@ -6,6 +6,7 @@ https://github.com/ruin1990/AnkiTemplate
 ## ClozeAdv
 A simple cloze for touch to show one by one answer
 It support multi-cloze cards with c1, c2, ... c[n]
+![demo](https://s3.bmp.ovh/imgs/2021/12/a08a795d540e1a09.gif)
 
 ## Compatibility
 | Platform | Support |

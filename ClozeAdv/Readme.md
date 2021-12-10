@@ -10,6 +10,7 @@ https://github.com/ruin1990/AnkiTemplate/ClozeAdv/front.html
 
 ## Features
 It can support multi-cloze sperate by c[n], some template will convert all the c[n] to c1
+![demo](https://s3.bmp.ovh/imgs/2021/12/a08a795d540e1a09.gif)
 
 ## Bugs
 ClozeAdv cannot support MathJax formulation cloze or some complex span/div.

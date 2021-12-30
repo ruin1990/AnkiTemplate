@@ -6,6 +6,21 @@
 </div>
 <script type="text/javascript">
 // https://github.com/ruin1990/AnkiTemplate/ClozeAdv/front.html
+
+var cloze_num = -1;
+
+function flipToBack() {
+	if (typeof pycmd !== "undefined") {
+		pycmd("ans")
+	} else if (typeof study !== "undefined") {
+		study.drawAnswer()
+	} else if (typeof AnkiDroidJS !== "undefined") {
+		showAnswer()
+	} else if (window.anki && window.sendMessage2) {
+		window.sendMessage2("ankitap", "midCenter")
+	}
+}
+
 function cloze_get_answer(text,prefix_len,postfix_len){
 	return text.substr(prefix_len, text.length-prefix_len-postfix_len);
 }
@@ -76,6 +91,8 @@ function add_answer_into_cloze(){
 	m = src.match(re)
 	
 	let arr = new Array;
+	if(m.length > 0)
+		cloze_num = m.length;
 	for(let i=0;i<m.length;i++){
 		arr.push(cloze_get_answer(m[i],prefix_len,postfix_len))
 	}
@@ -88,15 +105,22 @@ function add_answer_into_cloze(){
 	
 	$('.cloze').on("click",function(){
 		ans = $(this).attr("ans")
-		if($(this).html()==ans)
+		if($(this).html()==ans){
 			$(this).html("[...]");
-		else
+			cloze_num++;
+		}else{
 			$(this).html(ans);
+			cloze_num--;
+			if(cloze_num<=0)
+			{
+				flipToBack ();
+			}
+		}
 	});
 
 	//free some component, if not needed
 	$('#ruin_temp_src').remove();
-	$('#ruin_cloze_preprocess').remove();
+	//$('#ruin_cloze_preprocess').remove();
 }
 add_answer_into_cloze();
 </script>

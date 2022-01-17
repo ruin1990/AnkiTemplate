@@ -4,8 +4,15 @@ Some useful anki template improve our learning experience
 https://github.com/ruin1990/AnkiTemplate
 
 ## ClozeAdv
-A simple cloze for touch to show one by one answer
+A simple cloze for touch/click/keyboard to show one by one answer
 It support multi-cloze cards with c1, c2, ... c[n]
+
+> Demo for Mathjax
+
+![mathjax](https://s3.bmp.ovh/imgs/2022/01/aeb08735c12c001b.gif)
+
+> Demo for reciting Chinese
+
 ![demo](https://s3.bmp.ovh/imgs/2021/12/a08a795d540e1a09.gif)
 
 ## Compatibility

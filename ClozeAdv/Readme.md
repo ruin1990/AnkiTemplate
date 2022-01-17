@@ -2,16 +2,14 @@
 Now, we can touch one by one cloze if a card have multi-clozes.
 
 ## Usage
-1. You can import file AnkiTemplate_ClozeAdv.apkg
-2. Just change you own Cloze Template front content with my front.html
-
-https://github.com/ruin1990/AnkiTemplate/ClozeAdv/front.html
+1. You can import file AnkiTemplate_ClozeAdv.apkg or from [AnkiWeb](https://ankiweb.net/shared/info/457099967).
+2. Just change you own Cloze Template front content with my [front.html](https://github.com/ruin1990/AnkiTemplate/ClozeAdv/front.html).
 
 
 ## Features
 1. We can use touch/click/keyboard(Tab and Backquote) to reveal or cover the cloze.(Thanks: [kleinerpirat](https://forums.ankiweb.net/t/cloze-one-by-one-uncovering/12584))
 2. If all the clozes are revealed, the card will auto flip to back.(Thanks: [git9527](https://github.com/git9527/anki-awesome-select))
-3. I add a flow button view for reveal next cloze or cover previous cloze.(Thanks: [kleinerpirat](https://ankiweb.net/shared/info/1231171279))(Support English and Chinese automatically)
+3. I add a float button view for reveal next cloze or cover previous cloze.(Thanks: [kleinerpirat](https://ankiweb.net/shared/info/1231171279))(Support English and Chinese automatically)
 4. It can support multi-cloze sperate by c[n], some template will convert all the c[n] to c1
 5. Mathjax block is supported NOW!!!
 
@@ -48,4 +46,4 @@ If you find a bug, please let me know. It's best to bring the card set that repe
 ## Thanks & Reference
 1. Keyboard support, [kleinerpirat](https://forums.ankiweb.net/t/cloze-one-by-one-uncovering/12584)
 2. Auto flip to back, [git9527](https://github.com/git9527/anki-awesome-select)
-3. Flow button view, [kleinerpirat](https://ankiweb.net/shared/info/1231171279)
+3. Float button view, [kleinerpirat](https://ankiweb.net/shared/info/1231171279)

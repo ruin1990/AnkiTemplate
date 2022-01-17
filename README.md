@@ -3,7 +3,8 @@ Some useful anki template improve our learning experience
 
 https://github.com/ruin1990/AnkiTemplate
 
-## ClozeAdv
+## ClozeAdv 
+[Download from AnkiWeb](https://ankiweb.net/shared/info/457099967)
 A simple cloze for touch/click/keyboard to show one by one answer
 It support multi-cloze cards with c1, c2, ... c[n]
 

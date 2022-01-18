@@ -10,7 +10,7 @@ It support multi-cloze cards with c1, c2, ... c[n]
 
 > Demo for Mathjax
 
-![mathjax](https://s3.bmp.ovh/imgs/2022/01/aeb08735c12c001b.gif)
+![mathjax](https://s2.loli.net/2022/01/18/bMEhgUJaDLcqk8r.gif)
 
 > Demo for reciting Chinese
 

@@ -97,6 +97,7 @@ var shortcuts = {
 
 var cloze_num = -1;
 var have_mathjax_content = false;
+var cloze_objs = new Array;
 
 // flipToBack reference to https://github.com/git9527/anki-awesome-select
 function flipToBack() {
@@ -109,6 +110,7 @@ function flipToBack() {
 	} else if (window.anki && window.sendMessage2) {
 		window.sendMessage2("ankitap", "midCenter")
 	}
+	console.log("flipToBack");
 }
 
 function cloze_get_answer(text,prefix_len,postfix_len){
@@ -163,18 +165,18 @@ function get_cur_cloze_id(){
 	
 	//console.log(src)
 	//console.log(dst)
-	dst = dst.replace('<span class="cloze">[...]<\/span>', '[...]')
+	//dst = dst.replace('<span class="cloze">[...]<\/span>', '[...]') // may not nesscessary
 	//console.log(src)
 	//console.log(dst)
 	let len = Math.max(dst.length, src.length)
  
 	//const cloze_tmp = "<span class=\"cloze\">[...]</span>"
-	const cloze_tmp = "[...]"
+	//const cloze_tmp = "[...]"
 	//const cloze_skip = cloze_tmp.length - 1
 	for(var i=0, j=0;i<len;i++,j++){
 		if(src[i] == dst[j])
 			continue;
-		//console.log(i + ":" + src[i] + ":" +  dst[j])
+		//console.log(i + ":" + src[i] + ":"  + j + ":" +  dst[j])
 		//console.log("####################")
 		if(src[i] == '{' && src[i+1] == '{' && src[i+2] == 'c' && !isNaN(src[i+3])){
 			let src_tmp = src.substr(i);
@@ -187,13 +189,20 @@ function get_cur_cloze_id(){
 				return bak_id;//todo:
 			// \{\{c[id]::[text]\}\} 
 			let id = src_tmp.substr(3, text_start-3);
-			let text = src_tmp.substr(text_start+2, end-text_start-2);
+			let src_text = src_tmp.substr(text_start+2, end-text_start-2);
+			
+			let text;
+			let hint_idx = src_text.indexOf("::");
+			if(hint_idx>=0){
+				text = src_text.substr(0, hint_idx);
+			}else
+				text = src_text;
 			let dst_tmp = dst.substr(j, text.length);
 			//console.log("id=" + id);
 			//console.log("text=" + text);
 			//console.log("dddd=" + dst_tmp);
 			if(text == dst_tmp){
-				i+=(text.length+5+id.length+2-1);
+				i+=(src_text.length+5+id.length+2-1);
 				j+=(text.length-1);
 				//console.log("##continue id=" + id);
 				continue;
@@ -208,6 +217,10 @@ function get_cur_cloze_id(){
 	}
 }
 
+function hasScrollbar() {
+	return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
+}
+
 function cloze_toggle(item){
 	let block = item.children("div.ruin_quiz");
 	let ans = item.children("div.ruin_answer");
@@ -220,7 +233,7 @@ function cloze_toggle(item){
 		item.attr("answer", "on");
 		cloze_num--;
 		//console.log(cloze_num);
-		if(cloze_num<=0 && have_mathjax_content==false)
+		if(cloze_num<=0 && !hasScrollbar() && have_mathjax_content==false)
 		{
 			flipToBack();
 		}
@@ -260,14 +273,27 @@ function remove_cloze_tag(tmp, quiz_id=-1){
 			break;
 		// \{\{c[id]::[text]\}\} 
 		let id = str_tmp.substr(3, text_start-3);
-		let text = str_tmp.substr(text_start+2, end-text_start-2);
+		let text_hint = str_tmp.substr(text_start+2, end-text_start-2);
 		let src_text = str_tmp.substring(0, end+2);
+		
+		let text,hint;
+		let hint_idx = text_hint.indexOf("::");
+		if(hint_idx>=0){
+			text = text_hint.substr(0, hint_idx);
+			hint = "[" + text_hint.substr(hint_idx+2) + "]";
+		}else{
+			text = text_hint;
+			hint = "[...]"
+		}
+		
 		//console.log("id="+id);
+		//console.log("text_hint="+text_hint);
 		//console.log("text="+text);
+		//console.log("hint="+hint);
 		//console.log("src_text="+src_text);
 		
 		if(id == quiz_id)
-			x1 = x1.replace(src_text, "[...]");
+			x1 = x1.replace(src_text, hint);
 		else
 			x1 = x1.replace(src_text, text);
 		//console.log("x1="+x1);
@@ -295,7 +321,7 @@ function convert_cloze_text_into_quiz(text, id){
 }
 
 function coverPrevious() {
-	let previous = null;
+	/*let previous = null;
 	let flag = 0;
 	$('.cloze').each(function(){
 		if(flag != 0)
@@ -308,23 +334,55 @@ function coverPrevious() {
 	});
 	if(flag == 0 && previous!=null && previous.attr("answer")=="on"){
 		cloze_toggle(previous);
+	}*/
+	
+	let cloze_len = cloze_objs.length;
+	for(let i=cloze_len-1; i>=0; i--)
+	{
+		if(cloze_objs[i].attr("answer") == "on"){
+			cloze_toggle(cloze_objs[i]);
+			return;
+		}
 	}
 }
 
 function revealNext() {
-	let flag = 0;
+	//let flag = 0;
 	if(cloze_num<=0)
 	{
 		flipToBack();
 	}
-	$('.cloze').each(function(){
+	/*$('.cloze').each(function(){
 		if(flag != 0)
 			return;
 		if($(this).attr("answer") == "off"){
 			cloze_toggle($(this));
 			flag = 1;
 		}
-	});
+	});*/
+	let cloze_len = cloze_objs.length;
+	let idx = -1;
+	for(let i=cloze_len-1; i>=0; i--)
+	{
+		if(cloze_objs[i].attr("answer") == "on"){
+			idx = i+1;
+			break;
+		}
+	}
+	if(idx < cloze_len && idx>=0)
+	{
+		if(cloze_objs[idx].attr("answer") == "off"){
+			cloze_toggle(cloze_objs[idx]);
+			return;
+		}
+	}
+	for(let i=0; i<cloze_len; i++)
+	{
+		if(cloze_objs[i].attr("answer") == "off"){
+			cloze_toggle(cloze_objs[i]);
+			break;
+		}
+	}
 }
 
 function convert_mathjax_into_cloze(id){
@@ -364,7 +422,7 @@ function convert_mathjax_into_cloze(id){
 	dst = dst.replace(/(\\[\[(]((?!\\[\[(]).)*\\[\)\]])/mg, function(x){
 		i += 1;
 
-		if(x.indexOf('[...]')==-1 || mjblk.indexOf(x)==-1) // TODO: regex match may not sorted in a same result
+		if(/*x.indexOf('[...]')==-1 ||*/ mjblk.indexOf(x)==-1) // TODO: regex match may not sorted in a same result
 		//if(x.indexOf('[...]')==-1) // then you can use this, but it cannot work properly if mathjax block contains [...]
 			return x;
 
@@ -414,9 +472,17 @@ function add_answer_into_cloze(){
 		$(this).attr("tabindex", idx+10000);//for auto scroll
 		$(this).attr("answer", "off");
 		let src_html = $(this).html();
-		$(this).html('<div class="ruin_quiz" style="display:inline;">'+src_html+'</div><div  class="ruin_answer" style="display:none;">'+arr[idx]+'</div>');
+		let answer;
+		let hint_idx = arr[idx].indexOf("::");
+		if(hint_idx>=0){
+			answer = arr[idx].substr(0, hint_idx);
+		}else{
+			answer = arr[idx];
+		}
+		$(this).html('<div class="ruin_quiz" style="display:inline;">'+src_html+'</div><div  class="ruin_answer" style="display:none;">'+answer+'</div>');
 		//$(this).html('<span class="ruin_quiz"">'+src_html+'</span><span  class="ruin_answer" style="display:none;">'+arr[idx]+'</span>');
-		idx++
+		idx++;
+		cloze_objs.push($(this));
 	});
 	
 	$('.cloze').on("click", cloze_onclick);

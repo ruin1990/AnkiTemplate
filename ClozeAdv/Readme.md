@@ -1,5 +1,6 @@
 # ClozeAdv
 Now, we can touch one by one cloze if a card have multi-clozes.
+Original Github is [here](https://github.com/ruin1990/AnkiTemplate)
 
 ## Usage
 1. You can import file AnkiTemplate_ClozeAdv.apkg or from [AnkiWeb](https://ankiweb.net/shared/info/457099967).
@@ -31,7 +32,7 @@ MathJax is support NOW!!!
 | Platform | Support |
 | ---- | ---- |
 | AnkiDroid     | **YES** |
-|   AnkiMobile   | Not test, but I think it's supported |
+|   AnkiMobile   | Problem with iOS layout of floating buttons |
 |  AnkiWindows    | **YES** |
 |   AnkiMacOS   |  Not test, but I think it's supported   |
 

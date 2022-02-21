@@ -1,7 +1,6 @@
 # AnkiTemplate
 Some useful anki template improve our learning experience
-
-https://github.com/ruin1990/AnkiTemplate
+Original Github is [here](https://github.com/ruin1990/AnkiTemplate)
 
 ## ClozeAdv 
 [Download from AnkiWeb](https://ankiweb.net/shared/info/457099967)
@@ -20,7 +19,7 @@ It support multi-cloze cards with c1, c2, ... c[n]
 | Platform | Support |
 | ---- | ---- |
 | AnkiDroid     | **YES** |
-|   AnkiMobile   | Not test, but I think it's supported |
+|   AnkiMobile   | Problem with iOS layout of floating buttons |
 |  AnkiWindows    | **YES** |
 |   AnkiMacOS   |  Not test, but I think it's supported   |
 

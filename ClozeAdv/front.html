@@ -84,14 +84,19 @@
 // Tab for incremental reveal
 // ` for full reveal
 // for custom keycodes: https://keycode.info/
+var keycode_tab = 9;
+var keycode_backquote = 192;
+var keycode_q = 81;
+var keycode_w = 87;
+
 var shortcuts = {
 	"next": {
 		"name": "Tab",
-		"keycode": 9,
+		"keycodes": [keycode_tab/*, keycode_w*/],
 	},
 	"previous": {
 		"name": "Backquote",
-		"keycode": 192,
+		"keycodes": [keycode_backquote/*, keycode_q*/],
 	}
 };
 
@@ -500,11 +505,17 @@ function setupControls() {
 		//console.log(document.keyeventflag);
 		document.keyeventflag = "keyeventflag";
 		document.addEventListener("keydown", (event) => {
-			if (event.keyCode == shortcuts.next.keycode) {
+			/*if (event.keyCode == shortcuts.next.keycode) {
 				event.preventDefault();
 				revealNext();
 			}
-			else if (event.keyCode == shortcuts.previous.keycode) coverPrevious();
+			else if (event.keyCode == shortcuts.previous.keycode) coverPrevious();*/
+			if (shortcuts.next.keycodes.includes(event.keyCode)) {
+				event.preventDefault();
+				revealNext();
+			}
+			else if (shortcuts.previous.keycodes.includes(event.keyCode)) 
+				coverPrevious();
 		});
 	}
 

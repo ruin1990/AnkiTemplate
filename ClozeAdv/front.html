@@ -86,8 +86,8 @@
 // for custom keycodes: https://keycode.info/
 var keycode_tab = 9;
 var keycode_backquote = 192;
-var keycode_q = 81;
-var keycode_w = 87;
+//var keycode_q = 81;
+//var keycode_w = 87;
 
 var shortcuts = {
 	"next": {
@@ -226,13 +226,30 @@ function hasScrollbar() {
 	return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
 }
 
+function isInViewPort(element) {
+    let viewWidth = window.innerWidth || document.documentElement.clientWidth;
+    let viewHeight =
+          window.innerHeight || document.documentElement.clientHeight;
+    let x = element.getBoundingClientRect();
+ 
+    return x.top >= 0 && x.left >= 0 && x.right <= viewWidth && x.bottom <= viewHeight;
+}
+
 function cloze_toggle(item){
 	let block = item.children("div.ruin_quiz");
 	let ans = item.children("div.ruin_answer");
 	let ans_not_shown = ("" + ans.attr("style")).indexOf("inline") == -1;
+	
 	//console.log(x)
 	if(ans_not_shown)
 	{
+		if(!isInViewPort(item[0]))
+		{
+			//console.log("focus");
+			item.focus();
+			return;
+		}
+	
 		block.hide();
 		ans.css("display","inline");
 		item.attr("answer", "on");

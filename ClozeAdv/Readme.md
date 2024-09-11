@@ -118,7 +118,7 @@ If you use Anki web version, and the first card of each review has mathjax, the 
 |  Anki Windows    | **YES** |
 |   Anki MacOS   |  Not test, feedback & PR welcome   |
 |   Anki Linux   |  Not test, feedback & PR welcome   |
-|   Web version   |  **YES**, with [mathjax bugs](#MathJax Bugs)  |
+|   Web version   |  **YES**, with [mathjax bugs](#mathJax-bugs)  |
 
 I would appreciate it if someone could give feedback on the results of compatibility
 

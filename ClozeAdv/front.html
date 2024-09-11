@@ -1,3 +1,10 @@
+<!--
+// Anyone who uses this template please indicate the source.
+// https://github.com/ruin1990/AnkiTemplate/ClozeAdv
+// Version: v1.1
+// Date: 2024/09/11
+// License: Apache 2.0
+-->
 <div id="ruin_temp_dst" >
 {{cloze:Text}}
 </div>
@@ -119,6 +126,7 @@ function flipToBack() {
 }
 
 function cloze_get_answer(text,prefix_len,postfix_len){
+	//console.log(text,prefix_len,postfix_len);
 	return text.substr(prefix_len, text.length-prefix_len-postfix_len);
 }
 
@@ -162,7 +170,7 @@ function get_match_double_braces_index(x)
 	return -1;
 }
 
-function get_cur_cloze_id(){
+function get_cur_cloze_id_old(){
 	let bak_id = null;
 	
 	let dst=$('#ruin_temp_dst').html()
@@ -220,6 +228,16 @@ function get_cur_cloze_id(){
 		}
 		return bak_id;
 	}
+}
+
+function get_cur_cloze_id(){
+	var ordinal = $('span.cloze').first().data('ordinal');
+	//console.log("data-ordinal="+ordinal);
+	if (ordinal !== undefined) {
+        return ordinal.toString();
+    } else {
+        return get_cur_cloze_id_old(); // for old version anki
+    }
 }
 
 function hasScrollbar() {
@@ -410,6 +428,7 @@ function revealNext() {
 function convert_mathjax_into_cloze(id){
 	let src=$('#ruin_temp_src').html();
 	let dst=$('#ruin_temp_dst').html();
+	//console.log(src);
 	//console.log(dst);
 	//console.log("###start answer");
 	//dst = dst.replace(re, "<span class=\"cloze\">\\$1</span>");
@@ -463,11 +482,11 @@ function convert_mathjax_into_cloze(id){
 
 function add_answer_into_cloze(){
 	let id = get_cur_cloze_id();
-	if(id == null)
-	{
-		console.log("find cloze id failed")
+	if(id == null){
+		console.log("find cloze id failed");
 		return;
 	}
+
 	console.log("find cloze id = " + id)
 	convert_mathjax_into_cloze(id);
 	
@@ -481,15 +500,16 @@ function add_answer_into_cloze(){
 	let postfix_len = 2
 	
 	m = src.match(re);
-	
+	//console.log(m);
+
 	let arr = new Array;
 	if(m.length > 0)
 		cloze_num = m.length;
 	for(let i=0;i<m.length;i++){
 		arr.push(cloze_get_answer(m[i],prefix_len,postfix_len))
 	}
-	//console.log(arr)
-	let idx = 0
+	//console.log(arr);
+	let idx = 0;
 	$('.cloze').each(function(){
 		$(this).attr("tabindex", idx+10000);//for auto scroll
 		$(this).attr("answer", "off");
@@ -556,6 +576,60 @@ function setupControls() {
 	previous.innerHTML  += "<br>("+previousKey+")";
 }
 
-add_answer_into_cloze();
-setupControls();
+
+function loadScript(url, callback) {
+    let script = document.createElement('script');
+    script.src = url;
+    script.onload = function() {
+        callback(true); // 加载成功，执行回调函数
+    };
+    script.onerror = function() {
+        callback(false); // 加载失败，执行回调函数
+    };
+    document.head.appendChild(script); // 将脚本添加到页面
+}
+
+
+if (typeof jQuery === 'undefined') {
+	let lang = (navigator.browserLanguage || navigator.language).toLowerCase();
+	//console.log("lang="+lang);
+	let url0 = '_jquery-3.6.0.min.js';
+	let url1 = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+	let url2 = 'https://code.jquery.com/jquery-3.6.0.min.js';
+	if(lang.startsWith("zh")) {// translate, you can add other language
+		url1 = 'https://lib.baomitu.com/jquery/3.6.0/jquery.min.js';
+	}
+	loadScript(url0, function(success) {
+		if (!success) {
+			loadScript(url1, function(success) {
+				if (!success) {
+					loadScript(url2, function(success) {
+						if (!success) {
+							console.error('Cannot Load any jQuery resource');
+						} else {
+							console.log('Load 2nd online jQuery resource successful');
+							add_answer_into_cloze();
+							setupControls();
+						}
+					});
+				} else {
+					console.log('Load 1st online jQuery resource successful');
+					add_answer_into_cloze();
+					setupControls();
+				}
+			});
+		} else {
+			console.log('Load local jQuery resource successful');
+			add_answer_into_cloze();
+			setupControls();
+		}
+	});
+
+} else {
+	console.log('Not need Load jQuery resource');
+	add_answer_into_cloze();
+	setupControls();
+}
+
+
 </script>

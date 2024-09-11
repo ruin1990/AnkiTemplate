@@ -1,7 +1,7 @@
 <!--
 // Anyone who uses this template please indicate the source.
 // https://github.com/ruin1990/AnkiTemplate/ClozeAdv
-// Version: v1.1
+// Version: v1.2
 // Date: 2024/09/11
 // License: Apache 2.0
 -->
@@ -121,7 +121,17 @@ function flipToBack() {
 		showAnswer()
 	} else if (window.anki && window.sendMessage2) {
 		window.sendMessage2("ankitap", "midCenter")
+	} else if (window.anki) { //anki web
+		$('button.btn.btn-primary.btn-lg').length
+		let buttons = $('button.btn.btn-primary.btn-lg').filter(function() {
+			return $(this).attr('class') === 'btn btn-primary btn-lg';
+		});
+
+		if (buttons.length === 1) {
+			buttons.click();
+		}
 	}
+
 	console.log("flipToBack");
 }
 

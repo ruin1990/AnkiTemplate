@@ -29,6 +29,19 @@ It support multi-cloze cards with c1, c2, ... c[n]
 
 ![demo](https://s3.bmp.ovh/imgs/2021/12/a08a795d540e1a09.gif)
 
+## Choice
+
+选择题模版
+
+本选择题模版基线版本来自[@itboone](https://github.com/itboone)的[https://github.com/itboone/anki-template](https://github.com/itboone/anki-template)
+
+**模版界面展示**
+
+| 主题                             | 单选题正面                                                   | 多选题背面                                                  |
+| -------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
+| **亮色**主题<br/>**Light** Theme | ![choice_light_front.png](https://s2.loli.net/2024/10/17/JBY2Sm65ewvlpbC.jpg) | ![choice_light_back.png](https://s2.loli.net/2024/10/17/ew6WJ1KVqd58uoT.jpg) |
+| **暗色**主题<br>**Dark** Theme   | ![choice_dark_front.png](https://s2.loli.net/2024/10/17/XAR6vIDpsyNmhxz.jpg) | ![choice_dark_back.png](https://s2.loli.net/2024/10/17/ZuKVWB9xy6woQFh.jpg) |
+
 ## Compatibility
 | Platform | Support |
 | ---- | ---- |
@@ -37,7 +50,7 @@ It support multi-cloze cards with c1, c2, ... c[n]
 |  Anki Windows    | **YES** |
 |   Anki MacOS   |  Not test, feedback & PR welcome   |
 |   Anki Linux   |  Not test, feedback & PR welcome   |
-|   Web version   |  **YES**, with [mathjax bugs](https://github.com/ruin1990/AnkiTemplate/tree/main/ClozeAdv#mathjax-bugs)  |
+|   Web version   |  **YES**, ClozeAdv with [mathjax bugs](https://github.com/ruin1990/AnkiTemplate/tree/main/ClozeAdv#mathjax-bugs)  |
 
 I would appreciate it if someone could give feedback on the results of compatibility
 

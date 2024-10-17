@@ -1,0 +1,444 @@
+/* 关键字".card"为anki正反模板基础样式 */
+/* 注：名称不要定义为".question"否则有可能覆盖基础样式 */
+.card {
+	font-family: "Microsoft YaHei";
+	font-size: 18px;
+	text-align: left;
+	color: #fff;
+	background-color: #272822;
+}
+
+div {
+	margin:5px auto;
+}
+
+#score_board {
+	color:#fff;
+	font-style:italic;
+	font-weight:50;
+	font-size:12px;
+	text-align:center;
+	margin-bottom:8px;
+}
+
+#is_random {
+	visibility: hidden;
+}
+
+#is_random + label {
+  //display: inline-block;
+	//vertical-align: middle;
+	width: 20px;
+ 	height: 20px;
+	zoom: 100%;
+	cursor: pointer;
+	border: 0px solid #ccc;
+	border-radius: 1px;
+	font-weight: 350;
+	background: none;
+}
+
+#is_random:checked + label:after {
+	//display: inline-block;
+	text-align: center;
+	content: " \2714";
+	color: rgba(234, 152, 54, 1);
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#que_type {
+	color: #BA55D3;
+	font-weight: 700;
+	text-align: left;
+	margin-bottom: 10px;
+}
+#que_area {
+	color: #ddd689;
+	text-align: left;
+}
+.remark {
+	text-align: left;
+	margin-top: 15px;
+	font-size: 18px;
+	color: #79a967;
+}
+.remark a{
+	color: #6881d1;
+}
+.hint {
+	color: #a6e22e;
+}
+.cloze {
+	margin-left: 3px;
+	margin-right: 3px;
+	font-weight: bold;
+	color: #6881d1;
+}
+.right {
+	font-weight: bold;
+	color: #4cb050;
+}
+.right_unck {
+	font-weight: bold;
+	color: #4cb050;
+	text-decoration: underline #0eb83a;
+}
+.wrong {
+	font-weight: 400;
+	color: #d32f2e;
+	text-decoration:line-through;
+}
+/*列表项标记类型为大写字母*/
+.options {
+	list-style:upper-latin;
+	margin-top:12px;
+	padding-left:24px;
+}
+.options *{
+	cursor:pointer;
+}
+.options *:hover{
+	font-weight:bold;
+	color:#6881d1;
+}
+.options li{
+	margin-top:6px;
+}
+.options label {
+	/*vertical-align:middle;*/
+	line-height:25px;
+}
+.options input[name="opt_cb"]{
+	display:inline-block;
+	margin-top:1px;
+	heigh:24px;
+	vertical-align:middle;
+}
+</style>
+
+<!-- 引入CDN Jquery静态库文件(必需) -->
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<!-- 基于SessionStorage实现的anki数据缓存(转载Github) -->
+<script type="text/javascript">
+/*// v0.5.2 - https://github.com/SimonLammer/anki-persistence/blob/3912637b7a53cfe8357f3946d0255804386ac43c/script.js //*/
+	if (void 0 === window.Persistence) {
+		var _persistenceKey = "github.com/SimonLammer/anki-persistence/",
+			_defaultKey = "_default";
+		if (window.Persistence_sessionStorage = function() {
+			var e = !1;
+			try {
+				"object" == typeof window.sessionStorage && (e = !0, this.clear = function() {
+					for (var e = 0; e < sessionStorage.length; e++) {
+						var t = sessionStorage.key(e);
+						0 == t.indexOf(_persistenceKey) && (sessionStorage.removeItem(t), e--)
+					}
+				}, this.setItem = function(e, t) {
+					void 0 == t && (t = e, e = _defaultKey), sessionStorage.setItem(_persistenceKey + e, JSON.stringify(t))
+				}, this.getItem = function(e) {
+					return void 0 == e && (e = _defaultKey), JSON.parse(sessionStorage.getItem(_persistenceKey + e))
+				}, this.removeItem = function(e) {
+					void 0 == e && (e = _defaultKey), sessionStorage.removeItem(_persistenceKey + e)
+				})
+			} catch (e) {}
+			this.isAvailable = function() {
+				return e
+			}
+		}, window.Persistence_windowKey = function(e) {
+			var t = window[e],
+				i = !1;
+			"object" == typeof t && (i = !0, this.clear = function() {
+				t[_persistenceKey] = {}
+			}, this.setItem = function(e, i) {
+				void 0 == i && (i = e, e = _defaultKey), t[_persistenceKey][e] = i
+			}, this.getItem = function(e) {
+				return void 0 == e && (e = _defaultKey), t[_persistenceKey][e] || null
+			}, this.removeItem = function(e) {
+				void 0 == e && (e = _defaultKey), delete t[_persistenceKey][e]
+			}, void 0 == t[_persistenceKey] && this.clear()), this.isAvailable = function() {
+				return i
+			}
+		}, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) {
+			var titleStartIndex = window.location.toString()
+				.indexOf("title"),
+				titleContentIndex = window.location.toString()
+				.indexOf("main", titleStartIndex);
+			titleStartIndex > 0 && titleContentIndex > 0 && titleContentIndex - titleStartIndex < 10 && (window.Persistence = new Persistence_windowKey("qt"))
+		}
+	}
+</script>
+
+
+<script type="text/javascript">
+
+	$(function(){
+
+		// application platform (Mobile: undefined PC: desktop)
+		var platform = (window.ankiPlatform && ankiPlatform) || "mobile";
+		// print_log("anki platform: " + platform);
+
+		// 注：anki正反面传值：桌面版只需使用window对象,移动版需要使用缓存传值
+
+		// get subject from the cache
+		if(platform == "mobile" && Persistence.isAvailable()){
+			var persist_subject = Persistence.getItem("subject");
+			// print_log("get persist subject: " + JSON.stringify(persist_subject));
+			// covert Object into Subject
+			// window.subject = persist_subject && new Subject(persist_subject);
+			// ignore type conversion
+			window.subject = persist_subject;
+			// print_log("renew window subject: " + JSON.stringify(window.subject));
+		}
+
+		if(!window.subject){
+			// init the subject
+			window.subject = new Subject();
+			// print_log("init subject: " + JSON.stringify(subject));
+			// save the subejct
+			if(platform == "mobile" && Persistence.isAvailable()){
+				// 桌面版Anki Bug:缓存对象不会转化为JSON，修改源对象会影响缓存对象
+				Persistence.setItem("subject", window.subject);
+				// print_log("save subject: " + Persistence.getItem("subject").constructor);
+			}
+		}
+
+	});
+
+	function Subject(){
+		this.total = 0;
+		this.score = 0;
+		this.rate =  0;
+		this.is_rnd = 0;
+		this.que_type = '';
+		this.question = '';
+		this.opt_strs = [];
+		this.opt_lis =  '';
+		this.pre_ans = [];
+		this.fin_ans = [];
+		this.ckd_ans = [];
+	}
+
+	Date.prototype.format = function(fmt) { 
+		var o = {
+			"M+": this.getMonth() + 1, //月份 
+			"d+": this.getDate(), //日 
+			"H+": this.getHours(), //小时 
+			"m+": this.getMinutes(), //分 
+			"s+": this.getSeconds(), //秒 
+			"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+			"S": this.getMilliseconds() //毫秒 
+		};
+		if (/(y+)/.test(fmt)) {
+			fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "")
+					.substr(4 - RegExp.$1.length));
+		}
+		for (var k in o){
+			if (new RegExp("(" + k + ")").test(fmt)) {
+				fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : 
+						(("00" + o[k]).substr(("" + o[k]).length)));
+			}
+		}
+		return fmt;
+	}
+
+	Array.prototype.indexOfIgnoreCase = function(item, start){
+		if(typeof item == "string"){
+			let str = this.join("").toUpperCase();
+			return str.indexOf(String(item).toUpperCase(), start);
+		}
+		return this.indexOf(item, start);
+	}
+
+	function initialize(){
+		// 统计题目数量
+		subject.total ++;
+		// 缓存预设答案
+		subject.pre_ans = $("#ans_area").html().trim().match(/[A-K]/gi) || [];
+		// print_log("pre_ans:" + subject.pre_ans);
+		// 缓存题型
+		subject.que_type = subject.pre_ans.length > 1 ?  "[多选题]" : "[单选题]";
+		// 格式化题目
+		subject.question = format_question($("#que_area").html());
+		// 格式化选项列表
+		subject.opt_strs = format_options($("#opt_area").html());
+	}
+
+	// 显示题目
+	function show_question(){
+		subject.que_type && $("#que_type").html(subject.que_type);
+		subject.question && $("#que_area").html(subject.question);
+	}
+
+	// 随机显示选项
+	function show_options(){
+		// 获取选项数组
+		var options = subject.opt_strs;
+		// 生成随机序号数组
+		var ran_num = get_random_array(0, options.length);
+		// 取随机索引的选项
+		ran_num.forEach((num, i) => {
+			// 生成预设选项的字母标识
+			let pre_opt_id = String.fromCharCode(num + 65);
+			// 生成最终选项的字母标识
+			let fin_opt_id = String.fromCharCode(i + 65);
+			// 判断是否是预设的正确答案
+			if(subject.pre_ans.indexOfIgnoreCase(pre_opt_id) > -1){
+				// 保存随机组合后的最终答案
+				subject.fin_ans.push(fin_opt_id);
+			}
+			let li = create_li(fin_opt_id, options[num]);
+			$("#opt_list").append(li);
+		});
+		// 缓存list列表
+		subject.opt_lis = $("#opt_list").html();
+	}
+
+	// 更新选项及样式
+	function update_options(){
+		// 显示缓存list列表
+		$("#opt_list").html(subject.opt_lis);
+		// 获取所有复选框元素
+		var opt_cbs = $("[name='opt_cb']");
+		// 设置答案选项样式
+		opt_cbs.each((index, opt_cb) => {
+			let opt_id = opt_cb.id.substr(opt_cb.id.length - 1);	
+			// 设置已选答案选项样式：wrong (默认)
+			if(subject.ckd_ans.indexOf(opt_id) > -1){
+				// 显示复选框状态
+				opt_cb.checked = true;
+				// 设置默认样式
+				$('#' + opt_id).prop("class", "wrong");
+			}
+			// print_log("pre_ans: " + subject.pre_ans + ", ckd_ans: " + 
+			//		subject.ckd_ans + ", fin_ans: " + subject.fin_ans);
+			// 设置正确答案选项样式：right
+			if(subject.fin_ans.indexOf(opt_id) > -1){
+				subject.ckd_ans.indexOf(opt_id) > -1 && 
+					$('#' + opt_id).prop("class", "right") || 
+						$('#' + opt_id).prop("class", "right_unck");				
+			}
+			// 背面禁用复选框
+			opt_cb.disabled = true;
+		});
+	}
+
+	// 创建li标签元素
+	function create_li(opt_id, opt_desc){
+		var li = document.createElement('li');
+		var input = document.createElement("input");
+      var label = document.createElement("label");
+		input.setAttribute("id", "input" + opt_id);
+		input.setAttribute("name", "opt_cb");
+		input.setAttribute("type", "checkbox");
+		label.innerHTML = opt_desc;
+		label.setAttribute("for", input.id);
+		li.appendChild(input);
+		li.appendChild(label);
+		li.setAttribute("id", opt_id);
+		li.setAttribute("name", "option");
+		li.addEventListener("click", choice_option);
+		return li;
+	}
+	
+	// 列表选项单击事件
+	function choice_option(event) {
+		var event = event || window.event;
+		/* 防止事件冒泡多次执行 */
+		if (event.timeStamp - this.timeSpan < 100) {
+			return;
+		}
+		this.timeSpan = event.timeStamp;
+		var esrc = event.target || event.srcElement,
+			index, opt_id = esrc.id;
+		// print_log("event src: " + esrc);
+		if(/LABEL|INPUT/.test(esrc.tagName)){
+			opt_id = (esrc.htmlFor || esrc.id)
+				.substr((esrc.htmlFor || esrc.id).length - 1);
+		}else {
+			$("#input" + esrc.id).prop("checked", function(i, oldval){
+				return !oldval;
+			});
+		}
+		(index = subject.ckd_ans.indexOf(opt_id)) > -1 ?
+			subject.ckd_ans.splice(index, 1) : subject.ckd_ans.push(opt_id);
+	}
+
+	// 格式化题目
+	function format_question(que_str){
+		// 去除<div>标签
+		que_str = que_str.replace(/<\/?div>/g, "");
+		// 去除首尾换行标签<br>
+		que_str = que_str.replace(/^(<br\/?>)*/, "");
+		que_str = que_str.replace(/(<br\/?>)*$/, "");
+		// 去除开头序号
+		que_str = que_str.replace(/^[0-9][\.|、|．|:|：]{1}/i, "");
+		// 添加新序号
+		return subject.total + "、" + que_str.trim();
+	}
+
+	// 格式化选项, 返回选项数组
+	function format_options(opts_str){
+		opts_str = opts_str.replace(/<\/?div>/g, "\n");
+		opts_str = opts_str.replace(/<br\/?>/g, "\n");
+		opts_str = opts_str.replace(/\n+/g, "\n");
+		// 去除首尾换行符
+		opts_str = opts_str.replace(/^\n/, "");
+		opts_str = opts_str.replace(/\n$/, "");
+		// 选项内换行使用: [br]
+		opts_str = opts_str.replace(/\[br\]/g, "<br>");
+		// 以换行符分隔作为选项数组，并去除空白字符
+		return opts_str.split(/(\n|\r\n)/g)
+			.map(str => str.trim()
+			// 去掉选项开头序号
+			.replace(/^[A-Z][\.|、|．|:|：]{1}/i, ""))
+			.filter(str => str != "");
+	}
+	
+	function set_rnd(){
+		subject.is_rnd = $("#is_random").prop('checked');
+	}
+
+	// 获取指定起始值和长度的不重复随机整数数组
+	function get_random_array(begin, len){
+		var arr = Array(len).fill(begin).map((e, i) => e + i);
+		if(!subject.is_rnd) return arr;
+		return arr.sort((a, b) => 0.5 - Math.random());
+	}
+
+	// 更新计分板数据
+	function update_score(){
+		if(subject.fin_ans.sort().join() == subject.ckd_ans.sort().join()){
+			subject.score ++;
+		}
+		$("#is_random").prop('checked', subject.is_rnd);
+		subject.rate = ((subject.score / subject.total) * 100).toFixed(2);
+		$('#sc_detail').html('[刷题数]：' + subject.total + '&nbsp&nbsp[得分]：' + 
+			subject.score + '&nbsp&nbsp[准确率]：' + subject.rate + '%');
+	}
+
+	// 清除题目信息
+	function clear_subject(){
+		subject.que_type = '';
+		subject.question = '';
+		subject.opt_strs = [];
+		subject.opt_lis = '';
+		subject.pre_ans = [];
+		subject.fin_ans = [];
+		subject.ckd_ans = [];
+	}
+
+	// 打印日志(调试用)
+	function print_log(str){
+		if(!window.logbar){
+			window.logbar = document.createElement("div");
+			window.logbar.style="font-size:14px;"
+			document.body.appendChild(window.logbar);
+		}
+		var datetime = new Date().format("HH:mm:ss");
+		var pchild = document.createElement("p");
+		pchild.innerText += "[" + datetime + "] - " + String(str);
+		logbar.appendChild(pchild);
+	}
+
+</script>

@@ -1,0 +1,37 @@
+<div id = "que_type">[题型]</div>
+<!-- 显示问题：每个问题中必须包含一个填空标签"{{c1::}}" -->
+<div id = "que_area">{{cloze:Question}}</div>
+{{#Options}}
+<!-- 隐藏选项：主要用来传递选项参数 -->
+<div id = "opt_area" style = "display:none">{{Options}}</div>
+<div id = "ans_area" style = "display:none">{{Answer}}</div>
+<!-- 显示随机组合选项，每个选项必须以换行符分隔，选项中换行请用"[br]" -->
+<ol id = "opt_list" class="options"></ol>
+{{/Options}}
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		try {
+			//print_log("front before:" + JSON.stringify(subject));
+			// 初始化
+			initialize();
+			// 显示题目
+			show_question();
+			// 显示选项
+			show_options();
+			//print_log("front after:" + JSON.stringify(subject));
+		} catch(err){
+			print_log(err);
+		}
+	});
+
+	// 移动端front窗口跳转时缓存数据
+	$(window).unload(function(){
+		if(Persistence.isAvailable()){
+			// print_log("save subject: " + JSON.stringify(subject));
+			Persistence.setItem("subject", subject);
+		}
+	});
+
+</script>

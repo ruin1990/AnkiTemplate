@@ -10,7 +10,29 @@
 {{/Options}}
 
 <script type="text/javascript">
-
+	function setupControls() {
+		// for custom keycodes: https://keycode.info/
+		if(document.choicekeyeventflag != "choicekeyeventflag"){ // avoid for add keyevent listener multi-times
+			//console.log(document.choicekeyeventflag);
+			document.choicekeyeventflag = "choicekeyeventflag";
+			document.addEventListener("keydown", (event) => {
+				let key = event.keyCode;
+				switch(key)//shift z x c
+				{
+					case 16:$('#A').trigger('click');break;
+					case 90:$('#B').trigger('click');break;
+					case 88:$('#C').trigger('click');break;
+					case 67:$('#D').trigger('click');break;
+					default:break;
+				}
+				/*if (key >= 48 && key<=57) {
+					if(key==48)key=58;
+					let id=key-49+'A'.charCodeAt();
+					$('#'+String.fromCharCode(id)).trigger('click');
+				}*/
+			});
+		}
+	}
 	$(document).ready(function(){
 		try {
 			//print_log("front before:" + JSON.stringify(subject));
@@ -24,14 +46,12 @@
 		} catch(err){
 			print_log(err);
 		}
+		setupControls();
+		save_persistence();
 	});
 
 	// 移动端front窗口跳转时缓存数据
 	$(window).unload(function(){
-		if(Persistence.isAvailable()){
-			// print_log("save subject: " + JSON.stringify(subject));
-			Persistence.setItem("subject", subject);
-		}
+		save_persistence();
 	});
-
 </script>

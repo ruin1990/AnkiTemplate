@@ -4,16 +4,16 @@
 	font-family: "Microsoft YaHei";
 	font-size: 18px;
 	text-align: left;
+	background-color: #FFFFFF;
+}
+.nightMode .card {
 	color: #fff;
 	background-color: #272822;
 }
-
 div {
 	margin:5px auto;
 }
-
 #score_board {
-	color:#fff;
 	font-style:italic;
 	font-weight:50;
 	font-size:12px;
@@ -34,7 +34,7 @@ div {
 	cursor: pointer;
 	border: 0px solid #ccc;
 	border-radius: 1px;
-	font-weight: 350;
+	font-weight: 50;
 	background: none;
 }
 
@@ -54,8 +54,10 @@ div {
 	margin-bottom: 10px;
 }
 #que_area {
-	color: #ddd689;
 	text-align: left;
+}
+.nightMode #que_area {
+	color: #ddd689;
 }
 .remark {
 	text-align: left;
@@ -81,7 +83,8 @@ div {
 }
 .right_unck {
 	font-weight: bold;
-	color: #4cb050;
+	color: #00aaff;
+	//background-color: rgb(0, 0, 255);
 	text-decoration: underline #0eb83a;
 }
 .wrong {
@@ -116,57 +119,182 @@ div {
 	vertical-align:middle;
 }
 </style>
+<script type="text/javascript">
+function loadScript(url, callback) {
+    let script = document.createElement('script');
+    script.src = url;
+    script.onload = function() {
+        callback(true); // 加载成功，执行回调函数
+    };
+    script.onerror = function() {
+        callback(false); // 加载失败，执行回调函数
+    };
+    document.head.appendChild(script); // 将脚本添加到页面
+}
 
-<!-- 引入CDN Jquery静态库文件(必需) -->
-<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+if (typeof jQuery === 'undefined') {
+	let lang = (navigator.browserLanguage || navigator.language).toLowerCase();
+	//console.log("lang="+lang);
+	let url0 = '_jquery-3.6.0.min.js';
+	let url1 = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+	let url2 = 'https://code.jquery.com/jquery-3.6.0.min.js';
+	if(lang.startsWith("zh")) {// translate, you can add other language
+		url1 = 'https://lib.baomitu.com/jquery/3.6.0/jquery.min.js';
+	}
+	loadScript(url0, function(success) {
+		if (!success) {
+			loadScript(url1, function(success) {
+				if (!success) {
+					loadScript(url2, function(success) {
+						if (!success) {
+							console.error('Cannot Load any jQuery resource');
+						} else {
+							console.log('Load 2nd online jQuery resource successful');
+							add_answer_into_cloze();
+							setupControls();
+						}
+					});
+				} else {
+					console.log('Load 1st online jQuery resource successful');
+					add_answer_into_cloze();
+					setupControls();
+				}
+			});
+		} else {
+			console.log('Load local jQuery resource successful');
+			add_answer_into_cloze();
+			setupControls();
+		}
+	});
+
+} else {
+	console.log('Not need Load jQuery resource');
+	add_answer_into_cloze();
+	setupControls();
+}
+</script>
 
 <!-- 基于SessionStorage实现的anki数据缓存(转载Github) -->
 <script type="text/javascript">
-/*// v0.5.2 - https://github.com/SimonLammer/anki-persistence/blob/3912637b7a53cfe8357f3946d0255804386ac43c/script.js //*/
-	if (void 0 === window.Persistence) {
-		var _persistenceKey = "github.com/SimonLammer/anki-persistence/",
-			_defaultKey = "_default";
-		if (window.Persistence_sessionStorage = function() {
-			var e = !1;
-			try {
-				"object" == typeof window.sessionStorage && (e = !0, this.clear = function() {
-					for (var e = 0; e < sessionStorage.length; e++) {
-						var t = sessionStorage.key(e);
-						0 == t.indexOf(_persistenceKey) && (sessionStorage.removeItem(t), e--)
-					}
-				}, this.setItem = function(e, t) {
-					void 0 == t && (t = e, e = _defaultKey), sessionStorage.setItem(_persistenceKey + e, JSON.stringify(t))
-				}, this.getItem = function(e) {
-					return void 0 == e && (e = _defaultKey), JSON.parse(sessionStorage.getItem(_persistenceKey + e))
-				}, this.removeItem = function(e) {
-					void 0 == e && (e = _defaultKey), sessionStorage.removeItem(_persistenceKey + e)
-				})
-			} catch (e) {}
-			this.isAvailable = function() {
-				return e
-			}
-		}, window.Persistence_windowKey = function(e) {
-			var t = window[e],
-				i = !1;
-			"object" == typeof t && (i = !0, this.clear = function() {
-				t[_persistenceKey] = {}
-			}, this.setItem = function(e, i) {
-				void 0 == i && (i = e, e = _defaultKey), t[_persistenceKey][e] = i
-			}, this.getItem = function(e) {
-				return void 0 == e && (e = _defaultKey), t[_persistenceKey][e] || null
-			}, this.removeItem = function(e) {
-				void 0 == e && (e = _defaultKey), delete t[_persistenceKey][e]
-			}, void 0 == t[_persistenceKey] && this.clear()), this.isAvailable = function() {
-				return i
-			}
-		}, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) {
-			var titleStartIndex = window.location.toString()
-				.indexOf("title"),
-				titleContentIndex = window.location.toString()
-				.indexOf("main", titleStartIndex);
-			titleStartIndex > 0 && titleContentIndex > 0 && titleContentIndex - titleStartIndex < 10 && (window.Persistence = new Persistence_windowKey("qt"))
-		}
-	}
+/*// v1.1.8 - https://github.com/SimonLammer/anki-persistence/blob/v1.1.8/script.js //*/
+if (typeof(window.Persistence) === 'undefined') {
+  var _persistenceKey = 'github.com/SimonLammer/anki-persistence/';
+  var _defaultKey = '_default';
+  window.Persistence_sessionStorage = function() { // used in android, iOS, web
+    var isAvailable = false;
+    try {
+      if (typeof(window.sessionStorage) === 'object') {
+        isAvailable = true;
+        this.clear = function() {
+          for (var i = 0; i < sessionStorage.length; i++) {
+            var k = sessionStorage.key(i);
+            if (k.indexOf(_persistenceKey) == 0) {
+              sessionStorage.removeItem(k);
+              i--;
+            }
+          };
+        };
+        this.setItem = function(key, value) {
+          if (value == undefined) {
+            value = key;
+            key = _defaultKey;
+          }
+          sessionStorage.setItem(_persistenceKey + key, JSON.stringify(value));
+        };
+        this.getItem = function(key) {
+          if (key == undefined) {
+            key = _defaultKey;
+          }
+          return JSON.parse(sessionStorage.getItem(_persistenceKey + key));
+        };
+        this.removeItem = function(key) {
+          if (key == undefined) {
+            key = _defaultKey;
+          }
+          sessionStorage.removeItem(_persistenceKey + key);
+        };
+        this.getAllKeys = function () {
+          var keys = [];
+          var prefixedKeys = Object.keys(sessionStorage);
+          for (var i = 0; i < prefixedKeys.length; i++) {
+            var k = prefixedKeys[i];
+            if (k.indexOf(_persistenceKey) == 0) {
+              keys.push(k.substring(_persistenceKey.length, k.length));
+            }
+          };
+          return keys.sort()
+        }
+      }
+    } catch(err) {}
+    this.isAvailable = function() {
+      return isAvailable;
+    };
+  };
+  window.Persistence_windowKey = function(persistentKey) { // used in windows, linux, mac
+    var obj = window[persistentKey];
+    var isAvailable = false;
+    if (typeof(obj) === 'object') {
+      isAvailable = true;
+      this.clear = function() {
+        obj[_persistenceKey] = {};
+      };
+      this.setItem = function(key, value) {
+        if (value == undefined) {
+          value = key;
+          key = _defaultKey;
+        }
+        obj[_persistenceKey][key] = value;
+      };
+      this.getItem = function(key) {
+        if (key == undefined) {
+          key = _defaultKey;
+        }
+        return obj[_persistenceKey][key] == undefined ? null : obj[_persistenceKey][key];
+      };
+      this.removeItem = function(key) {
+        if (key == undefined) {
+          key = _defaultKey;
+        }
+        delete obj[_persistenceKey][key];
+      };
+      this.getAllKeys = function () {
+        return Object.keys(obj[_persistenceKey]);
+      }
+
+      if (obj[_persistenceKey] == undefined) {
+        this.clear();
+      }
+    }
+    this.isAvailable = function() {
+      return isAvailable;
+    };
+  };
+  /*
+   *   client  | sessionStorage | persistentKey | useful location |
+   * ----------|----------------|---------------|-----------------|
+   * web       |       YES      |       -       |       NO        |
+   * windows   |       NO       |       py      |       NO        |
+   * android   |       YES      |       -       |       NO        |
+   * linux 2.0 |       NO       |       qt      |       YES       |
+   * linux 2.1 |       NO       |       qt      |       YES       |
+   * mac 2.0   |       NO       |       py      |       NO        |
+   * mac 2.1   |       NO       |       qt      |       YES       |
+   * iOS       |       YES      |       -       |       NO        |
+   */
+  window.Persistence = new Persistence_sessionStorage(); // android, iOS, web
+  if (!Persistence.isAvailable()) {
+    window.Persistence = new Persistence_windowKey("py"); // windows, mac (2.0)
+  }
+  if (!Persistence.isAvailable()) {
+    var titleStartIndex = window.location.toString().indexOf('title'); // if titleStartIndex > 0, window.location is useful
+    var titleContentIndex = window.location.toString().indexOf('main', titleStartIndex);
+    if (titleStartIndex > 0 && titleContentIndex > 0 && (titleContentIndex - titleStartIndex) < 10) {
+      window.Persistence = new Persistence_windowKey("qt"); // linux, mac (2.1)
+    }
+  }
+}
+
 </script>
 
 
@@ -209,7 +337,7 @@ div {
 		this.total = 0;
 		this.score = 0;
 		this.rate =  0;
-		this.is_rnd = 0;
+		this.is_rnd = 1;
 		this.que_type = '';
 		this.question = '';
 		this.opt_strs = [];
@@ -251,6 +379,10 @@ div {
 	}
 
 	function initialize(){
+		subject.opt_lis = '';
+		subject.fin_ans = [];
+		subject.ckd_ans = [];
+		
 		// 统计题目数量
 		subject.total ++;
 		// 缓存预设答案
@@ -262,6 +394,8 @@ div {
 		subject.question = format_question($("#que_area").html());
 		// 格式化选项列表
 		subject.opt_strs = format_options($("#opt_area").html());
+		
+		subject.new_quiz = true;//标识是个新题目
 	}
 
 	// 显示题目
@@ -362,6 +496,16 @@ div {
 		}
 		(index = subject.ckd_ans.indexOf(opt_id)) > -1 ?
 			subject.ckd_ans.splice(index, 1) : subject.ckd_ans.push(opt_id);
+		save_persistence();
+	}
+
+	function save_persistence()
+	{
+		// 移动端缓存数据
+		if(Persistence.isAvailable()){
+			// print_log("save subject: " + JSON.stringify(subject));
+			Persistence.setItem("subject", subject);
+		}
 	}
 
 	// 格式化题目
@@ -408,7 +552,7 @@ div {
 
 	// 更新计分板数据
 	function update_score(){
-		if(subject.fin_ans.sort().join() == subject.ckd_ans.sort().join()){
+		if(subject.new_quiz && subject.fin_ans.sort().join() == subject.ckd_ans.sort().join()){
 			subject.score ++;
 		}
 		$("#is_random").prop('checked', subject.is_rnd);
@@ -419,13 +563,14 @@ div {
 
 	// 清除题目信息
 	function clear_subject(){
-		subject.que_type = '';
+		/*subject.que_type = '';
 		subject.question = '';
 		subject.opt_strs = [];
 		subject.opt_lis = '';
 		subject.pre_ans = [];
 		subject.fin_ans = [];
-		subject.ckd_ans = [];
+		subject.ckd_ans = [];*/
+		subject.new_quiz = false;//标识题目不是新题目了，解决手机版编辑以后技术错误的问题
 	}
 
 	// 打印日志(调试用)

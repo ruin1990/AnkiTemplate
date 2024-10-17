@@ -1,4 +1,4 @@
-<div id = "score_board"><span id="sc_detail">[计分板]</span><span><input id="is_random" type="checkbox" onclick="set_rnd()"/><label for="is_random"/>R</label></span></div>
+<div id = "score_board"><span id="sc_detail">[计分板]</span><span><input id="is_random" type="checkbox" onclick="set_rnd()"/><label for="is_random"/>随机选项</label></span></div>
 <div id = "que_type">[题型]</div>
 <div id = "que_area">{{cloze:Question}}</div>
 {{#Options}}
@@ -34,10 +34,7 @@
 
 	// 移动端back窗口跳转时缓存数据
 	$(window).unload(function(){
-		if(Persistence.isAvailable()){
-			// print_log("save subject: " + JSON.stringify(subject));
-			Persistence.setItem("subject", subject);
-		}
+		save_persistence();
 	});
 
 </script>

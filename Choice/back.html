@@ -1,4 +1,4 @@
-<div id = "score_board"><span id="sc_detail">[计分板]</span><span><input id="is_random" type="checkbox" onclick="set_rnd()"/><label for="is_random"/>随机选项</label></span></div>
+<div id = "score_board"><span id="sc_detail">[计分板]</span><span><input id="is_random" type="checkbox" onclick="set_rnd()" checked="true"/><label for="is_random"/><span>随机选项</span></label></span></div>
 <div id = "que_type">[题型]</div>
 <div id = "que_area">{{cloze:Question}}</div>
 {{#Options}}
@@ -12,29 +12,33 @@
 {{/Remark}}
 
 <script type="text/javascript">
+	function initialize_async(){
+		init_persistance();
+		$(document).ready(function(){
+			try{
+				//print_log("back before:" + JSON.stringify(subject));
+				// 显示题目
+				show_question();
+				// 更新选项
+				update_options();
+				// 更新计分板
+				update_score();
+				//print_log("back after:" + JSON.stringify(subject));
+			} catch(err) {
+				print_log(err);
+			}finally {
+				// 清除题目信息
+				clear_subject();
+				//print_log("clear after:" + JSON.stringify(subject));
+			}
+		});
 
-	$(document).ready(function(){
-		try{
-			//print_log("back before:" + JSON.stringify(subject));
-			// 显示题目
-			show_question();
-			// 更新选项
-			update_options();
-			// 更新计分板
-			update_score();
-			//print_log("back after:" + JSON.stringify(subject));
-		} catch(err) {
-			print_log(err);
-		}finally {
-			// 清除题目信息
-			clear_subject();
-			//print_log("clear after:" + JSON.stringify(subject));
-		}
+		// 移动端back窗口跳转时缓存数据
+		$(window).on('beforeunload', function() {
+    		save_persistence();
+		});
+	}
+	loadJQueryResources(function() {
+		initialize_async();
 	});
-
-	// 移动端back窗口跳转时缓存数据
-	$(window).unload(function(){
-		save_persistence();
-	});
-
 </script>

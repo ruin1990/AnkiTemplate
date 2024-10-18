@@ -26,11 +26,11 @@ div {
 }
 
 #is_random + label {
-  //display: inline-block;
+    display: inline-block;
 	//vertical-align: middle;
-	width: 20px;
+	//width: 20px;
  	height: 20px;
-	zoom: 100%;
+	//zoom: 100%;
 	cursor: pointer;
 	border: 0px solid #ccc;
 	border-radius: 1px;
@@ -132,47 +132,67 @@ function loadScript(url, callback) {
     document.head.appendChild(script); // 将脚本添加到页面
 }
 
-
-if (typeof jQuery === 'undefined') {
-	let lang = (navigator.browserLanguage || navigator.language).toLowerCase();
-	//console.log("lang="+lang);
-	let url0 = '_jquery-3.6.0.min.js';
-	let url1 = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
-	let url2 = 'https://code.jquery.com/jquery-3.6.0.min.js';
-	if(lang.startsWith("zh")) {// translate, you can add other language
-		url1 = 'https://lib.baomitu.com/jquery/3.6.0/jquery.min.js';
-	}
-	loadScript(url0, function(success) {
-		if (!success) {
-			loadScript(url1, function(success) {
-				if (!success) {
-					loadScript(url2, function(success) {
-						if (!success) {
-							console.error('Cannot Load any jQuery resource');
-						} else {
-							console.log('Load 2nd online jQuery resource successful');
-							add_answer_into_cloze();
-							setupControls();
-						}
-					});
-				} else {
-					console.log('Load 1st online jQuery resource successful');
-					add_answer_into_cloze();
-					setupControls();
-				}
-			});
-		} else {
-			console.log('Load local jQuery resource successful');
-			add_answer_into_cloze();
-			setupControls();
+// 主函数，接受一个回调函数作为参数
+function loadJQueryResources(callback) {
+	if (typeof jQuery === 'undefined') {
+		let lang = (navigator.browserLanguage || navigator.language).toLowerCase();
+		//console.log("lang=" + lang);
+		let url0 = '_jquery-3.6.0.min.js'; // Add it to you media resource dir(filename startswith underline)
+		let url1 = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+		let url2 = 'https://code.jquery.com/jquery-3.6.0.min.js';
+		if (lang.startsWith("zh")) { // 针对中文语言
+			url1 = 'https://lib.baomitu.com/jquery/3.6.0/jquery.min.js';
 		}
-	});
+		// 加载本地或远程 jQuery 资源
+		loadScript(url0, function(success) {
+			if (!success) {
+				loadScript(url1, function(success) {
+					if (!success) {
+						loadScript(url2, function(success) {
+							if (!success) {
+								console.error('Cannot Load any jQuery resource');
+							} else {
+								console.log('Load 2nd online jQuery resource successful');
+								if (typeof callback === 'function') {
+									callback();
+								}
+							}
+						});
+					} else {
+						console.log('Load 1st online jQuery resource successful');
+						if (typeof callback === 'function') {
+							callback();
+						}
+					}
+				});
+			} else {
+				console.log('Load local jQuery resource successful');
+				if (typeof callback === 'function') {
+					callback();
+				}
+			}
+		});
+	} else {
+		console.log('Not need to load jQuery resource');
+		if (typeof callback === 'function') {
+			callback();
+		}
+	}
+}
 
-} else {
-	console.log('Not need Load jQuery resource');
+/* demo
+// 调用主函数，并在回调中执行指定的逻辑
+function initialize() {
 	add_answer_into_cloze();
 	setupControls();
 }
+document.addEventListener("DOMContentLoaded", function() {
+	loadJQueryResources(function() {
+		initialize();
+	});
+});
+
+*/
 </script>
 
 <!-- 基于SessionStorage实现的anki数据缓存(转载Github) -->
@@ -300,10 +320,10 @@ if (typeof(window.Persistence) === 'undefined') {
 
 <script type="text/javascript">
 
-	$(function(){
+	function init_persistance(){
 
 		// application platform (Mobile: undefined PC: desktop)
-		var platform = (window.ankiPlatform && ankiPlatform) || "mobile";
+		let platform = (window.ankiPlatform && ankiPlatform) || "mobile";
 		// print_log("anki platform: " + platform);
 
 		// 注：anki正反面传值：桌面版只需使用window对象,移动版需要使用缓存传值
@@ -331,7 +351,7 @@ if (typeof(window.Persistence) === 'undefined') {
 			}
 		}
 
-	});
+	}
 
 	function Subject(){
 		this.total = 0;
@@ -416,6 +436,7 @@ if (typeof(window.Persistence) === 'undefined') {
 			let pre_opt_id = String.fromCharCode(num + 65);
 			// 生成最终选项的字母标识
 			let fin_opt_id = String.fromCharCode(i + 65);
+			// print_log("fin_opt_id: " + fin_opt_id + ", fin_opt_id: " + fin_opt_id);
 			// 判断是否是预设的正确答案
 			if(subject.pre_ans.indexOfIgnoreCase(pre_opt_id) > -1){
 				// 保存随机组合后的最终答案
@@ -459,9 +480,9 @@ if (typeof(window.Persistence) === 'undefined') {
 
 	// 创建li标签元素
 	function create_li(opt_id, opt_desc){
-		var li = document.createElement('li');
-		var input = document.createElement("input");
-      var label = document.createElement("label");
+		let li = document.createElement('li');
+		let input = document.createElement("input");
+		let label = document.createElement("label");
 		input.setAttribute("id", "input" + opt_id);
 		input.setAttribute("name", "opt_cb");
 		input.setAttribute("type", "checkbox");
@@ -476,34 +497,51 @@ if (typeof(window.Persistence) === 'undefined') {
 	}
 	
 	// 列表选项单击事件
-	function choice_option(event) {
-		var event = event || window.event;
-		/* 防止事件冒泡多次执行 */
-		if (event.timeStamp - this.timeSpan < 100) {
-			return;
-		}
-		this.timeSpan = event.timeStamp;
-		var esrc = event.target || event.srcElement,
-			index, opt_id = esrc.id;
-		// print_log("event src: " + esrc);
-		if(/LABEL|INPUT/.test(esrc.tagName)){
-			opt_id = (esrc.htmlFor || esrc.id)
-				.substr((esrc.htmlFor || esrc.id).length - 1);
-		}else {
-			$("#input" + esrc.id).prop("checked", function(i, oldval){
-				return !oldval;
-			});
-		}
-		(index = subject.ckd_ans.indexOf(opt_id)) > -1 ?
-			subject.ckd_ans.splice(index, 1) : subject.ckd_ans.push(opt_id);
-		save_persistence();
+	function findParentWithId(element) {
+	    while (element && !element.id) {
+	        element = element.parentElement; // 向上查找父元素
+	    }
+	    return element; // 返回找到的元素或 null
 	}
+
+	function choice_option(event) {
+	    let evt = event || window.event;
+	    if (evt.timeStamp - this.timeSpan < 100) {
+	        return;
+	    }
+	    this.timeSpan = evt.timeStamp;
+	    let esrc = evt.target || evt.srcElement;
+
+	    let index, opt_id = esrc.id;
+		
+		// 如果 esrc.id 为空，查找父元素
+		if (!opt_id) {
+	        opt_id = findParentWithId(esrc).id;
+	    }
+
+	    //print_log("event src: " + esrc);
+
+	    if (/LABEL|INPUT/.test(esrc.tagName)) {
+	        opt_id = (esrc.htmlFor || esrc.id)
+	            .substr((esrc.htmlFor || esrc.id).length - 1);
+	    } else {
+	        $("#input" + esrc.id).prop("checked", function(i, oldval) {
+	            return !oldval;
+	        });
+	    }
+
+	    (index = subject.ckd_ans.indexOf(opt_id)) > -1 ?
+	        subject.ckd_ans.splice(index, 1) : subject.ckd_ans.push(opt_id);
+	    save_persistence();
+	}
+
 
 	function save_persistence()
 	{
 		// 移动端缓存数据
 		if(Persistence.isAvailable()){
 			// print_log("save subject: " + JSON.stringify(subject));
+			// print_log("save subject: " + JSON.stringify(subject.ckd_ans));
 			Persistence.setItem("subject", subject);
 		}
 	}
@@ -541,6 +579,7 @@ if (typeof(window.Persistence) === 'undefined') {
 	
 	function set_rnd(){
 		subject.is_rnd = $("#is_random").prop('checked');
+		save_persistence();
 	}
 
 	// 获取指定起始值和长度的不重复随机整数数组
@@ -575,7 +614,7 @@ if (typeof(window.Persistence) === 'undefined') {
 
 	// 打印日志(调试用)
 	function print_log(str){
-		if(!window.logbar){
+		/*if(!window.logbar){
 			window.logbar = document.createElement("div");
 			window.logbar.style="font-size:14px;"
 			document.body.appendChild(window.logbar);
@@ -583,7 +622,8 @@ if (typeof(window.Persistence) === 'undefined') {
 		var datetime = new Date().format("HH:mm:ss");
 		var pchild = document.createElement("p");
 		pchild.innerText += "[" + datetime + "] - " + String(str);
-		logbar.appendChild(pchild);
+		logbar.appendChild(pchild);*/
+		console.log(str);
 	}
 
 </script>

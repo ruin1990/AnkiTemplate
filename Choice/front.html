@@ -33,25 +33,32 @@
 			});
 		}
 	}
-	$(document).ready(function(){
-		try {
-			//print_log("front before:" + JSON.stringify(subject));
-			// 初始化
-			initialize();
-			// 显示题目
-			show_question();
-			// 显示选项
-			show_options();
-			//print_log("front after:" + JSON.stringify(subject));
-		} catch(err){
-			print_log(err);
-		}
-		setupControls();
-		save_persistence();
-	});
+	
+	function initialize_async(){
+		init_persistance();
+		$(document).ready(function(){
+			try {
+				//print_log("front before:" + JSON.stringify(subject));
+				// 初始化
+				initialize();
+				// 显示题目
+				show_question();
+				// 显示选项
+				show_options();
+				//print_log("front after:" + JSON.stringify(subject));
+			} catch(err){
+				print_log(err);
+			}
+			setupControls();
+			save_persistence();
+		});
 
-	// 移动端front窗口跳转时缓存数据
-	$(window).unload(function(){
-		save_persistence();
+		// 移动端front窗口跳转时缓存数据
+		$(window).on('beforeunload', function() {
+    		save_persistence();
+		});
+	}
+	loadJQueryResources(function() {
+		initialize_async();
 	});
 </script>

@@ -5,6 +5,19 @@
 本选择题模版基线版本来自[@itboone](https://github.com/itboone)的[https://github.com/itboone/anki-template](https://github.com/itboone/anki-template)，真的很感谢这位大佬，模版用了好久。直到Anki又双叒叕更新了。
 
 我在此基础上，为了自己的一些需求增加了以下功能(或者修复了一些我认为是bug的问题)：
+
+**v1.2.1**
+
+1. 升级jquery兼容性到3.6.0
+2. 修复动态加载导致的jquery代码先执行导致的persistant异常
+3. 修复Ankiweb网页版上的兼容性问题
+4. 修复选项带mathjax导致的点击mathjax块选项出现的bug
+5. 优化部分函数代码改全局变量为局部变量
+6. 修复Ankiweb网页版上随机选项失效的问题
+7. 日志函数暂时改为控制台输出(因为网页版无法动态添加logbar)
+
+**v1.2**
+
 1. 默认随机选项
 2. 修复了移动设备上编辑后返回卡片选项混乱的问题
 3. 增加了2套主题色，调整原有主题为亮色背景，同时增加了对暗色模式的适配
